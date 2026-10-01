@@ -170,7 +170,7 @@
             }
         });
 
-        function updateUI(data) {
+        function renderData(data) {
             if (!data) return;
             document.getElementById('status-text').innerText = "LIVE DATA RECEIVED";
 
@@ -202,24 +202,16 @@
             realtimeChart.update();
         }
 
-        // ดึงข้อมูล Realtime ทั้งแบบโหนด Root และลูก
-        db.ref().on('value', (snapshot) => {
-            const val = snapshot.val();
-            if (!val) return;
+        // ดึงเฉพาะ Node ล่าสุดตัวเดียวที่ถูก Push เข้ามา
+        db.ref().limitToLast(1).on('child_added', (snapshot) => {
+            const data = snapshot.val();
+            renderData(data);
+        });
 
-            // หากเป็น Object ที่อัปเดตเข้ามา
-            if (val.temperature !== undefined) {
-                updateUI(val);
-            } else if (val.latest && val.latest.temperature !== undefined) {
-                updateUI(val.latest);
-            } else {
-                // หากเป็นรายการย่อยที่ Push เข้ามา ดึงไอเท็มล่าสุด
-                const keys = Object.keys(val);
-                const lastKey = keys[keys.length - 1];
-                if (val[lastKey] && typeof val[lastKey] === 'object') {
-                    updateUI(val[lastKey]);
-                }
-            }
+        // หรือถ้ามีการอัปเดตค่าเปลี่ยนใน Child Node เดิม
+        db.ref().limitToLast(1).on('child_changed', (snapshot) => {
+            const data = snapshot.val();
+            renderData(data);
         });
     </script>
 </body>
