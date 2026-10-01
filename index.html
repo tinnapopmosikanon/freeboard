@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-time IoT Dashboard</title>
+    <title>Real-time IoT Dashboard (iot-111)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -23,27 +23,27 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                     </svg>
-                    Real-time IoT Dashboard (นศ. 111)
+                    Real-time IoT Dashboard (iot-111)
                 </h1>
                 <p class="text-slate-400 text-sm mt-1">ระบบแสดงผลข้อมูลเซ็นเซอร์อัจฉริยะแบบ Real-time</p>
             </div>
             <div class="flex items-center gap-2 bg-slate-900/80 px-4 py-2 rounded-full border border-slate-700">
                 <span class="relative flex h-3 w-3">
-                    <span
-                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    <span id="status-ping"
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                    <span id="status-dot" class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
                 </span>
-                <span id="status-text"
-                    class="text-xs font-semibold tracking-wider text-emerald-400 uppercase">CONNECTING...</span>
+                <span id="status-text" class="text-xs font-semibold tracking-wider text-amber-400 uppercase">WAITING FOR
+                    DATA...</span>
             </div>
         </div>
 
-        <!-- Sensor Grid -->
+        <!-- Sensor Grid (6 Columns Required Data) -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Temp -->
+            <!-- 1. Temp -->
             <div class="bg-slate-800/40 p-5 rounded-xl border border-slate-700/50 flex items-center justify-between">
                 <div>
-                    <p class="text-xs uppercase font-bold text-slate-400 tracking-wider">อุณหภูมิ (TEMPERATURE)</p>
+                    <p class="text-xs uppercase font-bold text-slate-400 tracking-wider">อุณหภูมิ (TEMP)</p>
                     <p class="text-3xl font-extrabold text-amber-400 mt-2"><span id="val-temp">--</span> °C</p>
                 </div>
                 <div class="p-3 bg-amber-500/10 rounded-lg text-amber-400">
@@ -54,11 +54,11 @@
                 </div>
             </div>
 
-            <!-- Humidity -->
+            <!-- 2. Humidity -->
             <div class="bg-slate-800/40 p-5 rounded-xl border border-slate-700/50 flex items-center justify-between">
                 <div>
-                    <p class="text-xs uppercase font-bold text-slate-400 tracking-wider">ความชื้น (HUMIDITY)</p>
-                    <p class="text-3xl font-extrabold text-blue-400 mt-2"><span id="val-hum">--</span> %</p>
+                    <p class="text-xs uppercase font-bold text-slate-400 tracking-wider">ความชื้น (HUMI)</p>
+                    <p class="text-3xl font-extrabold text-blue-400 mt-2"><span id="val-humi">--</span> %</p>
                 </div>
                 <div class="p-3 bg-blue-500/10 rounded-lg text-blue-400">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,21 +68,7 @@
                 </div>
             </div>
 
-            <!-- PM2.5 -->
-            <div class="bg-slate-800/40 p-5 rounded-xl border border-slate-700/50 flex items-center justify-between">
-                <div>
-                    <p class="text-xs uppercase font-bold text-slate-400 tracking-wider">ฝุ่น PM2.5</p>
-                    <p class="text-3xl font-extrabold text-rose-400 mt-2"><span id="val-pm25">--</span> µg/m³</p>
-                </div>
-                <div class="p-3 bg-rose-500/10 rounded-lg text-rose-400">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 15a4 4 0 004 4h9a5 5 0 001-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z" />
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Light -->
+            <!-- 3. Light -->
             <div class="bg-slate-800/40 p-5 rounded-xl border border-slate-700/50 flex items-center justify-between">
                 <div>
                     <p class="text-xs uppercase font-bold text-slate-400 tracking-wider">ความสว่าง (LIGHT)</p>
@@ -96,7 +82,21 @@
                 </div>
             </div>
 
-            <!-- CO2 -->
+            <!-- 4. PM2.5 -->
+            <div class="bg-slate-800/40 p-5 rounded-xl border border-slate-700/50 flex items-center justify-between">
+                <div>
+                    <p class="text-xs uppercase font-bold text-slate-400 tracking-wider">ฝุ่น PM2.5</p>
+                    <p class="text-3xl font-extrabold text-rose-400 mt-2"><span id="val-pm25">--</span> µg/m³</p>
+                </div>
+                <div class="p-3 bg-rose-500/10 rounded-lg text-rose-400">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 15a4 4 0 004 4h9a5 5 0 001-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- 5. CO2 -->
             <div class="bg-slate-800/40 p-5 rounded-xl border border-slate-700/50 flex items-center justify-between">
                 <div>
                     <p class="text-xs uppercase font-bold text-slate-400 tracking-wider">ก๊าซคาร์บอนฯ (CO2)</p>
@@ -110,7 +110,7 @@
                 </div>
             </div>
 
-            <!-- Battery -->
+            <!-- 6. Battery -->
             <div class="bg-slate-800/40 p-5 rounded-xl border border-slate-700/50 flex items-center justify-between">
                 <div>
                     <p class="text-xs uppercase font-bold text-slate-400 tracking-wider">แบตเตอรี่ (BATTERY)</p>
@@ -127,13 +127,15 @@
 
         <!-- Chart Section -->
         <div class="bg-slate-800/40 p-6 rounded-2xl border border-slate-700/50">
-            <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+            <h2 class="text-lg font-bold text-slate-200 mb-1 flex items-center gap-2">
                 <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
                 </svg>
                 แนวโน้มข้อมูลแบบ Real-time
             </h2>
+            <p class="text-xs text-slate-400 mb-4">Unix Timestamp: <span id="val-time" class="text-slate-200">--</span>
+            </p>
             <div class="h-72 w-full">
                 <canvas id="realtimeChart"></canvas>
             </div>
@@ -141,13 +143,15 @@
     </div>
 
     <script>
+        // อัปเดต Database URL ของ iot-111 เรียบร้อยแล้ว
         const firebaseConfig = {
-            databaseURL: "https://myiotproject-15ecd-default-rtdb.firebaseio.com"
+            databaseURL: "https://iot-111-32a85-default-rtdb.firebaseio.com"
         };
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // Chart setup
         const ctx = document.getElementById('realtimeChart').getContext('2d');
         const realtimeChart = new Chart(ctx, {
             type: 'line',
@@ -155,8 +159,8 @@
                 labels: [],
                 datasets: [
                     { label: 'Temp (°C)', borderColor: '#f59e0b', data: [], fill: false, tension: 0.3 },
-                    { label: 'Humidity (%)', borderColor: '#3b82f6', data: [], fill: false, tension: 0.3 },
-                    { label: 'PM2.5 (µg/m³)', borderColor: '#f43f5e', data: [], fill: false, tension: 0.3 }
+                    { label: 'Humi (%)', borderColor: '#3b82f6', data: [], fill: false, tension: 0.3 },
+                    { label: 'Light (Lux)', borderColor: '#eab308', data: [], fill: false, tension: 0.3 }
                 ]
             },
             options: {
@@ -170,25 +174,36 @@
             }
         });
 
-        function renderData(data) {
+        // ดึงค่า Real-time จาก node /latest
+        db.ref('latest').on('value', (snapshot) => {
+            const data = snapshot.val();
             if (!data) return;
+
+            // Update Status UI
             document.getElementById('status-text').innerText = "LIVE DATA RECEIVED";
+            document.getElementById('status-text').className = "text-xs font-semibold tracking-wider text-emerald-400 uppercase";
+            document.getElementById('status-ping').className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75";
+            document.getElementById('status-dot').className = "relative inline-flex rounded-full h-3 w-3 bg-emerald-500";
 
-            const temp = data.temperature ?? data.temp ?? '--';
-            const hum = data.humidity ?? data.hum ?? '--';
+            // Update Sensor Values
+            const temp = data.temp ?? '--';
+            const humi = data.humi ?? '--';
+            const light = data.light ?? '--';
             const pm25 = data.pm25 ?? '--';
-            const light = data.light ?? data.lux ?? '--';
-            const co2 = data.co2 ?? data.co2_ppm ?? '--';
-            const bat = data.battery ?? data.bat ?? '--';
+            const co2 = data.co2 ?? '--';
+            const bat = data.battery ?? '--';
+            const ts = data.timestamp ?? '--';
 
-            document.getElementById('val-temp').innerText = temp;
-            document.getElementById('val-hum').innerText = hum;
-            document.getElementById('val-pm25').innerText = pm25;
+            document.getElementById('val-temp').innerText = typeof temp === 'number' ? temp.toFixed(1) : temp;
+            document.getElementById('val-humi').innerText = typeof humi === 'number' ? humi.toFixed(1) : humi;
             document.getElementById('val-light').innerText = light;
+            document.getElementById('val-pm25').innerText = pm25;
             document.getElementById('val-co2').innerText = co2;
             document.getElementById('val-bat').innerText = bat;
+            document.getElementById('val-time').innerText = ts;
 
-            let timeLabel = new Date().toLocaleTimeString();
+            // Format Time for Chart Label
+            let timeLabel = ts !== '--' ? new Date(ts * 1000).toLocaleTimeString() : new Date().toLocaleTimeString();
 
             if (realtimeChart.data.labels.length > 10) {
                 realtimeChart.data.labels.shift();
@@ -196,22 +211,10 @@
             }
 
             realtimeChart.data.labels.push(timeLabel);
-            realtimeChart.data.datasets[0].data.push(temp !== '--' ? parseFloat(temp) : 0);
-            realtimeChart.data.datasets[1].data.push(hum !== '--' ? parseFloat(hum) : 0);
-            realtimeChart.data.datasets[2].data.push(pm25 !== '--' ? parseFloat(pm25) : 0);
+            realtimeChart.data.datasets[0].data.push(typeof temp === 'number' ? temp : 0);
+            realtimeChart.data.datasets[1].data.push(typeof humi === 'number' ? humi : 0);
+            realtimeChart.data.datasets[2].data.push(typeof light === 'number' ? light : 0);
             realtimeChart.update();
-        }
-
-        // ดึงเฉพาะ Node ล่าสุดตัวเดียวที่ถูก Push เข้ามา
-        db.ref().limitToLast(1).on('child_added', (snapshot) => {
-            const data = snapshot.val();
-            renderData(data);
-        });
-
-        // หรือถ้ามีการอัปเดตค่าเปลี่ยนใน Child Node เดิม
-        db.ref().limitToLast(1).on('child_changed', (snapshot) => {
-            const data = snapshot.val();
-            renderData(data);
         });
     </script>
 </body>
